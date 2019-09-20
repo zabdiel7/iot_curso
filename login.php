@@ -5,54 +5,58 @@ $_SESSION['logged'] = false;
 $msg="";
 $email="";
 
-if(isset($_POST['email']) && isset($_POST['password'])){
+if(isset($_POST['email']) && isset($_POST['password'])) {
 
-  if($_POST['email'] ==""){
+  if ($_POST['email']==""){
     $msg.="Debe ingresar un email <br>";
-  }else if ($_POST['password']==""){
+  }else if ($_POST['password']=="") {
     $msg.="Debe ingresar la clave <br>";
   }else {
     $email = strip_tags($_POST['email']);
-    $password = sha1(sha1($_POST['password']));
+    $password= sha1(strip_tags($_POST['password']));
 
-    //momento de conectarse a DB
-    $conn = mysqli_connect("localhost", "admin_cursoiot", "12345678", "admin_cursoiot" );
+    //momento de conectarnos a db
+    $conn = mysqli_connect("localhost","admin_cursoiot","121212","admin_cursoiot");
 
-    if($conn==false){
-      echo "Hubo un problema al conectarse a Maria DB";
+
+    if ($conn==false){
+      echo "Hubo un problema al conectarse a María DB";
       die();
     }
 
-    $result = $conn->query("SELECT * FROM `users` WHERE `users_email` = '".$email."' AND `users_password` = '".$password."' ");
+    $result = $conn->query("SELECT * FROM `users` WHERE `users_email` = '".$email."' AND  `users_password` = '".$password."' ");
     $users = $result->fetch_all(MYSQLI_ASSOC);
 
-    //cuenta cuantos elementos tiene $tabla,
+
+    //cuento cuantos elementos tiene $tabla,
     $count = count($users);
 
     if ($count == 1){
 
-      $_SESSION['users_id'] = $users[0]['users_id'];
+      //cargo datos del usuario en variables de sesión
+      $_SESSION['user_id'] = $users[0]['users_id'];
       $_SESSION['users_email'] = $users[0]['users_email'];
 
       $msg .= "Exito!!!";
       $_SESSION['logged'] = true;
 
 
-      echo '<meta http-equiv="refresh content=2; url=dashboard.php"';
-    }else {
-      $msg .= "Acceso denegado";
+
+      echo '<meta http-equiv="refresh" content="2; url=dashboard.php">';
+    }else{
+      $msg .= "Acceso denegado!!!";
       $_SESSION['logged'] = false;
     }
   }
 }
 
- ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>IoT class</title>
+  <title>IoT Masterclass</title>
   <meta name="description" content="Admin, Dashboard, Bootstrap, Bootstrap 4, Angular, AngularJS" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -90,8 +94,9 @@ if(isset($_POST['email']) && isset($_POST['password'])){
     </div>
     <div class="p-a-md box-color r box-shadow-z1 text-color m-a">
       <div class="m-b text-sm">
-        Sign in with your IoT account
+        Sign in with your IoT Account
       </div>
+
 
 
       <form target="" method="post" name="form">
@@ -99,20 +104,22 @@ if(isset($_POST['email']) && isset($_POST['password'])){
           <input name="email" type="email" class="md-input" value="<?php echo $email ?>" ng-model="user.email" required >
           <label>Email</label>
         </div>
-        <div class="md-form-group float-label">
-          <input name="password" type="password" class="md-input" ng-model="user.password" required>
+        <div  class="md-form-group float-label">
+          <input name="password" type="password" class="md-input" ng-model="user.password" required >
           <label>Password</label>
         </div>
         <button type="submit" class="btn primary btn-block p-x-md">Sign in</button>
       </form>
+
+      <div style="color:red" class="">
+        <?php echo $msg ?>
+      </div>
+
+
+
+
+
     </div>
-
-    <div style="color:red" class="">
-      <?php  echo $msg ?>
-    </div>
-
-
-
 
     <div class="p-v-lg text-center">
       <div class="m-b"><a ui-sref="access.forgot-password" href="forgot-password.html" class="text-primary _600">Forgot password?</a></div>
@@ -152,6 +159,10 @@ if(isset($_POST['email']) && isset($_POST['password'])){
   <!-- ajax -->
   <script src="libs/jquery/jquery-pjax/jquery.pjax.js"></script>
   <script src="html/scripts/ajax.js"></script>
+
+
+
+
 <!-- endbuild -->
 </body>
 </html>
